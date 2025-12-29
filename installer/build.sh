@@ -28,11 +28,18 @@ envsubst < installer/${OS}/autostart > dist/autostart
 
 cat dist/autostart
 
-[ ! -d "installer/tmp" ] && mkdir -p installer/tmp
+[ ! -d "tmp" ] && mkdir -p tmp
 
-../makeself/makeself.sh --notemp --nox11 dist/ "installer/tmp/${RUN_FILE}" \
+if [ ! -f tmp/makeself/makeself.sh ]; then
+	curl -sL -o tmp/makeself.run https://github.com/megastep/makeself/releases/download/release-2.7.1/makeself-2.7.1.run
+	chmod u+x tmp/makeself.run
+	tmp/makeself.run --quiet --target tmp/makeself
+	chmod u+x tmp/makeself/makeself.sh
+fi
+
+tmp/makeself/makeself.sh --notemp --nox11 dist/ "tmp/${RUN_FILE}" \
 	"ms: installing..." "./local.sh" 1>/dev/null
 
-echo "in tmp" && ls installer/tmp
+echo "in tmp" && ls tmp
 
 echo "sh: building done"

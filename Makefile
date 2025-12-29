@@ -1,6 +1,6 @@
 .EXPORT_ALL_VARIABLES:
 
-SSH_PUB_KEY=$(shell cat ${HOME}/.ssh/id_ed25519.pub)
+SSH_PUB_KEY=$(shell cat ${HOME}/.ssh/id_ed25519.pub || true)
 docker_container_name=alpine-sensors
 docker_image_name="${GITHUB_USER}/${docker_container_name}:latest"
 
