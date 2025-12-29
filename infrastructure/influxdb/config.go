@@ -3,7 +3,7 @@ package influxdb
 import (
 	"fmt"
 
-	"github.com/bernardolm/iot/sensors-publisher-go/config"
+	"github.com/bernardolm/sensors-publisher-go/config"
 )
 
 var database, password, url, username, token string

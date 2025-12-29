@@ -5,19 +5,19 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/bernardolm/iot/sensors-publisher-go/config"
-	formatterhomeassistant "github.com/bernardolm/iot/sensors-publisher-go/formatter/homeassistant"
-	formatterinfluxdb "github.com/bernardolm/iot/sensors-publisher-go/formatter/influxdb"
-	"github.com/bernardolm/iot/sensors-publisher-go/infrastructure/influxdb"
-	"github.com/bernardolm/iot/sensors-publisher-go/infrastructure/mqtt"
-	"github.com/bernardolm/iot/sensors-publisher-go/logging"
-	"github.com/bernardolm/iot/sensors-publisher-go/publisher"
-	publisherinfluxdb "github.com/bernardolm/iot/sensors-publisher-go/publisher/influxdb"
-	publishermqtt "github.com/bernardolm/iot/sensors-publisher-go/publisher/mqtt"
-	publisherstdout "github.com/bernardolm/iot/sensors-publisher-go/publisher/stdout"
-	sensords18a20 "github.com/bernardolm/iot/sensors-publisher-go/sensor/ds18a20"
-	sensormock "github.com/bernardolm/iot/sensors-publisher-go/sensor/mock"
-	"github.com/bernardolm/iot/sensors-publisher-go/worker"
+	"github.com/bernardolm/sensors-publisher-go/config"
+	formatterhomeassistant "github.com/bernardolm/sensors-publisher-go/formatter/homeassistant"
+	formatterinfluxdb "github.com/bernardolm/sensors-publisher-go/formatter/influxdb"
+	"github.com/bernardolm/sensors-publisher-go/infrastructure/influxdb"
+	"github.com/bernardolm/sensors-publisher-go/infrastructure/mqtt"
+	"github.com/bernardolm/sensors-publisher-go/logging"
+	"github.com/bernardolm/sensors-publisher-go/publisher"
+	publisherinfluxdb "github.com/bernardolm/sensors-publisher-go/publisher/influxdb"
+	publishermqtt "github.com/bernardolm/sensors-publisher-go/publisher/mqtt"
+	publisherstdout "github.com/bernardolm/sensors-publisher-go/publisher/stdout"
+	sensords18a20 "github.com/bernardolm/sensors-publisher-go/sensor/ds18a20"
+	sensormock "github.com/bernardolm/sensors-publisher-go/sensor/mock"
+	"github.com/bernardolm/sensors-publisher-go/worker"
 )
 
 func main() {

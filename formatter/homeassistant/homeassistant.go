@@ -1,8 +1,8 @@
 package homeassistant
 
 import (
-	"github.com/bernardolm/iot/sensors-publisher-go/message"
-	"github.com/bernardolm/iot/sensors-publisher-go/sensor"
+	"github.com/bernardolm/sensors-publisher-go/message"
+	"github.com/bernardolm/sensors-publisher-go/sensor"
 )
 
 const (

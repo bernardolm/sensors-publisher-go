@@ -3,7 +3,7 @@ package homeassistant
 import (
 	"fmt"
 
-	"github.com/bernardolm/iot/sensors-publisher-go/sensor"
+	"github.com/bernardolm/sensors-publisher-go/sensor"
 )
 
 const (

@@ -7,7 +7,7 @@ import (
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/bernardolm/iot/sensors-publisher-go/config"
+	"github.com/bernardolm/sensors-publisher-go/config"
 )
 
 var client mqtt.Client

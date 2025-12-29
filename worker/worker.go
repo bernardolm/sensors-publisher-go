@@ -6,10 +6,10 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/bernardolm/iot/sensors-publisher-go/config"
-	"github.com/bernardolm/iot/sensors-publisher-go/formatter"
-	"github.com/bernardolm/iot/sensors-publisher-go/publisher"
-	"github.com/bernardolm/iot/sensors-publisher-go/sensor"
+	"github.com/bernardolm/sensors-publisher-go/config"
+	"github.com/bernardolm/sensors-publisher-go/formatter"
+	"github.com/bernardolm/sensors-publisher-go/publisher"
+	"github.com/bernardolm/sensors-publisher-go/sensor"
 )
 
 type worker struct {

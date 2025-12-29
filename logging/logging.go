@@ -7,7 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/yukitsune/lokirus"
 
-	"github.com/bernardolm/iot/sensors-publisher-go/config"
+	"github.com/bernardolm/sensors-publisher-go/config"
 )
 
 func Init() {

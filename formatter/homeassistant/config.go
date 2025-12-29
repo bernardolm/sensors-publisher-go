@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"text/template"
 
-	"github.com/bernardolm/iot/sensors-publisher-go/sensor"
+	"github.com/bernardolm/sensors-publisher-go/sensor"
 )
 
 const (

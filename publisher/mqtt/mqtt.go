@@ -5,7 +5,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	mqttclient "github.com/bernardolm/iot/sensors-publisher-go/infrastructure/mqtt"
+	mqttclient "github.com/bernardolm/sensors-publisher-go/infrastructure/mqtt"
 )
 
 type mqtt struct{}

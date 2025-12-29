@@ -5,7 +5,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	influxdbclient "github.com/bernardolm/iot/sensors-publisher-go/infrastructure/influxdb"
+	influxdbclient "github.com/bernardolm/sensors-publisher-go/infrastructure/influxdb"
 )
 
 type influxdb struct{}
