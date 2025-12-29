@@ -10,6 +10,7 @@ import (
 	formatterinfluxdb "github.com/bernardolm/sensors-publisher-go/formatter/influxdb"
 	"github.com/bernardolm/sensors-publisher-go/infrastructure/influxdb"
 	"github.com/bernardolm/sensors-publisher-go/infrastructure/mqtt"
+	sqlitequeue "github.com/bernardolm/sensors-publisher-go/infrastructure/sqlite"
 	"github.com/bernardolm/sensors-publisher-go/logging"
 	"github.com/bernardolm/sensors-publisher-go/publisher"
 	publisherinfluxdb "github.com/bernardolm/sensors-publisher-go/publisher/influxdb"
@@ -34,8 +35,27 @@ func main() {
 
 	influxdb.Start(ctx)
 
-	pbMqtt := publishermqtt.New()
-	pbInfluxdb := publisherinfluxdb.New()
+	queuePath := config.Get[string]("SQLITE_PATH")
+	if queuePath == "" {
+		queuePath = "./queue.db"
+	}
+
+	queueBatch := config.Get[int]("SQLITE_FLUSH_BATCH")
+	queue, err := sqlitequeue.New(queuePath, queueBatch)
+	if err != nil {
+		log.WithError(err).Warn("sqlite queue: disabled")
+	}
+
+	if queue != nil {
+		defer func() {
+			if err := queue.Close(); err != nil {
+				log.WithError(err).Warn("sqlite queue: close failed")
+			}
+		}()
+	}
+
+	pbMqtt := publishermqtt.New(queue)
+	pbInfluxdb := publisherinfluxdb.New(queue)
 	pbStdout := publisherstdout.New()
 	w := worker.New()
 

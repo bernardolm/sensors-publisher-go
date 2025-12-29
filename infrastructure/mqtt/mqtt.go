@@ -2,6 +2,7 @@ package mqtt
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
@@ -53,18 +54,30 @@ func Connect(_ context.Context) error {
 	return nil
 }
 
-func Send(_ context.Context, topic string, payload interface{}) {
+func IsConnected() bool {
+	return client != nil && client.IsConnected()
+}
+
+func Send(_ context.Context, topic string, payload interface{}) error {
 	log.Debug("mqtt: publishing")
+	if client == nil {
+		return errors.New("mqtt: client not initialized")
+	}
+
+	if !client.IsConnected() {
+		return errors.New("mqtt: not connected")
+	}
+
 	token := client.Publish(topic, 0, true, payload)
-	go func() {
-		_ = token.Wait()
-		if token.Error() != nil {
-			log.WithError(token.Error()).Error("mqtt: fail to publish")
-		}
-		log.WithField("topic", topic).
-			WithField("payload", fmt.Sprintf("%s", payload)).
-			Info("mqtt: sent")
-	}()
+	if token.Error() != nil {
+		return token.Error()
+	}
+
+	log.WithField("topic", topic).
+		WithField("payload", fmt.Sprintf("%s", payload)).
+		Info("mqtt: sent")
+
+	return nil
 }
 
 func Close(_ context.Context) {

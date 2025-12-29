@@ -3,6 +3,7 @@ package influxdb
 import (
 	"context"
 	"fmt"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -12,16 +13,20 @@ func Start(ctx context.Context) {
 	_ = getAPI(ctx)
 }
 
-func Send(ctx context.Context, _ string, payload interface{}) {
+func Send(ctx context.Context, _ string, payload []byte) error {
 	log.Debug("influxdb: publishing")
 
-	line := payload.([]byte)
-	getAPI(ctx).WriteRecord(string(line))
-	getAPI(ctx).Flush()
+	startedAt := time.Now()
+	getAPI(ctx).WriteRecord(string(payload))
+	if err := lastWriteError(startedAt); err != nil {
+		return err
+	}
 
 	log.
 		WithField("payload", fmt.Sprintf("%s", payload)).
 		Info("influxdb: sent")
+
+	return nil
 }
 
 func Finish(ctx context.Context) {
