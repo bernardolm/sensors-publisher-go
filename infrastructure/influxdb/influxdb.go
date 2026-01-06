@@ -3,38 +3,43 @@ package influxdb
 import (
 	"context"
 	"fmt"
-	"time"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/bernardolm/sensors-publisher-go/infrastructure/config"
+	"github.com/bernardolm/sensors-publisher-go/infrastructure/logging"
+	influx "github.com/influxdata/influxdb-client-go"
+	influxapi "github.com/influxdata/influxdb-client-go/api"
 )
 
-func Start(ctx context.Context) {
-	log.Info("influxdb: starting client")
-	_ = getAPI(ctx)
+type Client struct {
+	client   influx.Client
+	database string
+	password string
+	token    string
+	url      string
+	username string
+	writer   influxapi.WriteAPI
 }
 
-func Send(ctx context.Context, _ string, payload []byte) error {
-	log.Debug("influxdb: publishing")
-
-	startedAt := time.Now()
-	getAPI(ctx).WriteRecord(string(payload))
-	if err := lastWriteError(startedAt); err != nil {
-		return err
+func New(ctx context.Context) (*Client, error) {
+	c := Client{
+		database: config.Get[string]("INFLUX_DATABASE"),
+		password: config.Get[string]("INFLUX_PASSWORD"),
+		url:      config.Get[string]("INFLUX_URL"),
+		username: config.Get[string]("INFLUX_USERNAME"),
 	}
 
-	log.
-		WithField("payload", fmt.Sprintf("%s", payload)).
-		Info("influxdb: sent")
+	if c.url == "" {
+		logging.Log.Warnf("influxdb: no host configured")
+		return nil, nil
+	}
 
-	return nil
-}
+	c.token = fmt.Sprintf("%s:%s", c.username, c.password)
 
-func Finish(ctx context.Context) {
-	log.Debug("influxdb: disconnecting")
+	if c.client == nil || c.writer == nil {
+		if err := c.connect(ctx); err != nil {
+			return nil, err
+		}
+	}
 
-	api = nil
-	getClient(ctx).Close()
-	client = nil
-
-	log.Info("influxdb: disconnected")
+	return &c, nil
 }

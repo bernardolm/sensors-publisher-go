@@ -1,0 +1,58 @@
+#!/usr/bin/env /bin/zsh
+echo "> starting pre-commit"
+
+go mod tidy
+
+to_ignore="bin dev docs tmp"
+
+if [ "${FILES}" = "all" ]; then
+  # modified_go_files=$(find . -name '*.go' | sort | tr '\n' ' ')
+  modified_go_files=.
+else
+  modified_go_files=$(git diff --name-only --diff-filter=ACMRTUXB | grep '\.go$' | sort | tr '\n' ' ')
+fi
+
+if [ -n "${modified_go_files}" ]; then
+  echo -e "> working on these files\n${modified_go_files// /\\n}"
+
+  # echo "> gofumpt"
+  # command -v gofumpt &>/dev/null || go install mvdan.cc/gofumpt@latest
+  # eval "gofumpt -e -l -w -extra ${modified_go_files}"
+
+  echo "> goimports"
+  command -v goimports &>/dev/null || go install golang.org/x/tools/cmd/goimports@latest
+  eval "goimports -e -l -w ${modified_go_files}"
+
+  # echo "> gci"
+  # command -v gci &>/dev/null || go install github.com/daixiang0/gci@latest
+  # gci_command="gci \$gco_cmd ${modified_go_files} --skip-generated --skip-vendor"
+  # gci_cmds=("list" "write")
+  # for gco_cmd in "${gci_cmds[@]}"; do
+  #   eval echo "$gci_command"
+  # done
+
+  echo "> gofmt"
+  command -v gofmt &>/dev/null || go install golang.org/x/tools/cmd/gofmt@latest
+  gofmt_command="gofmt -e -l -s -w -r 'any -> any'"
+  eval ${gofmt_command} ${modified_go_files}
+
+	echo "> golines"
+	command -v golines &>/dev/null || go install github.com/segmentio/golines@latest
+	# NOTE: `cat` is used to ignore base formatting by golines
+	# other way is bypass gofmt above and use this below:
+	# --base-formatter="\"${gofmt_command}\""
+	golines_command="golines \
+		--base-formatter='/bin/cat' \
+		--chain-split-dots \
+		--ignore-generated \
+		--ignored-dirs="\"${to_ignore}\"" \
+		--max-len=120 \
+		--reformat-tags \
+		--shorten-comments \
+		--tab-len=2 \
+		--write-output"
+	eval ${golines_command} ${modified_go_files}
+
+fi
+
+echo "> pre-commit done"

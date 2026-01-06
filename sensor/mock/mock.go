@@ -1,59 +1,33 @@
 package mock
 
 import (
-	"fmt"
-	"math/rand"
+	"strings"
+	"time"
 
-	"github.com/aws/aws-sdk-go/aws"
-	log "github.com/sirupsen/logrus"
+	"golang.org/x/text/cases"
 )
 
 type mock struct {
-	id string
+	caser             cases.Caser
+	class             string
+	icon              string
+	id                string
+	manufacturer      string
+	model             string
+	picture           string
+	time              time.Time
+	unitOfMeasurement string
 }
 
-func (a *mock) Get() (interface{}, error) {
-	value := aws.Float32(rand.Float32() * 15.96)
+func (s *mock) Class() string             { return s.class }
+func (s *mock) Icon() string              { return s.icon }
+func (s *mock) ID() string                { return s.id }
+func (s *mock) Manufacturer() string      { return s.manufacturer }
+func (s *mock) Model() string             { return s.model }
+func (s *mock) Picture() string           { return s.picture }
+func (s *mock) Time() time.Time           { return s.time }
+func (s *mock) UnitOfMeasurement() string { return s.unitOfMeasurement }
 
-	if value == nil {
-		return nil, fmt.Errorf("sensor: get value failed")
-	}
-
-	log.WithField("name", "mock").WithField("value", *value).Debug("sensor: getting values")
-
-	return *value, nil
-}
-
-func (a *mock) DeviceClass() string {
-	return "pressure"
-}
-
-func (a *mock) ID() string {
-	return a.id
-}
-
-func (a *mock) Manufacturer() string {
-	return "Unknown"
-}
-
-func (a *mock) Model() string {
-	return "mock"
-}
-
-func (a *mock) Name() string {
-	return fmt.Sprintf("%s %s sensor", a.Model(), a.DeviceClass())
-}
-
-func (a *mock) UniqueID() string {
-	return fmt.Sprintf("%s_%s", a.ID(), a.DeviceClass())
-}
-
-func (a *mock) UnitOfMeasurement() string {
-	return "hPa"
-}
-
-func New() *mock {
-	return &mock{
-		id: "sensor_mock",
-	}
+func (s *mock) Name() string {
+	return s.caser.String(strings.ReplaceAll(s.class, "_", " ") + " mock")
 }

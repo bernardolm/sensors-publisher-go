@@ -1,19 +1,16 @@
 package sensor
 
-type Type string
-
-const (
-	DS18A20 Type = "DS18A20"
-	Mock    Type = "Mock"
-)
+import "time"
 
 type Sensor interface {
-	DeviceClass() string
-	Get() (value interface{}, err error)
+	Class() string
+	Icon() string
 	ID() string
 	Manufacturer() string
 	Model() string
 	Name() string
-	UniqueID() string
+	Picture() string
+	Time() time.Time
 	UnitOfMeasurement() string
+	Value() (any, error)
 }

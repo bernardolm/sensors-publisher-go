@@ -1,0 +1,29 @@
+{
+  "availability": [
+    {
+      "topic": "sensors_publisher_go/bridge/state"
+    },
+    {
+      "topic": "sensors_publisher_go/ds18b20_temperature_sensor/availability"
+    }
+  ],
+  "availability_mode": "all",
+  "device": {
+    "identifiers": [
+      "sensors_publisher_go_28-020391776aaf"
+    ],
+    "manufacturer": "Unknown",
+    "model": "ds18b20",
+    "name": "ds18b20_temperature_sensor",
+    "sw_version": "0.0.2"
+  },
+  "device_class": "temperature",
+  "enabled_by_default": true,
+  "json_attributes_topic": "sensors_publisher_go/ds18b20_temperature_sensor",
+  "name": "ds18b20_temperature_sensor",
+  "state_class": "measurement",
+  "state_topic": "sensors_publisher_go/ds18b20_temperature_sensor",
+  "unique_id": "28-020391776aaf_temperature_sensors_publisher_go",
+  "unit_of_measurement": "°C",
+  "value_template": "{{ value_json.temperature }}"
+}

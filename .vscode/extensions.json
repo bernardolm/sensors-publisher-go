@@ -1,0 +1,23 @@
+{
+  "recommendations": [
+		"aaron-bond.better-comments",
+		"adpyke.vscode-sql-formatter",
+		"dakara.transformer",
+		"dzhavat.bracket-pair-toggler",
+		"golang.go",
+		"gruntfuggly.todo-tree",
+		"ibm.output-colorizer",
+		"kamikillerto.vscode-colorize",
+		"ms-vscode.makefile-tools",
+		"ms-vscode.sublime-keybindings",
+		"neptunedesign.vs-slug",
+		"nhoizey.gremlins",
+		"oderwat.indent-rainbow",
+		"prettier.prettier-vscode",
+		"redhat.vscode-yaml",
+		"ryu1kn.partial-diff",
+		"shardulm94.trailing-spaces",
+		"tamasfe.even-better-toml",
+		"wakatime.vscode-wakatime",
+  ]
+}

@@ -3,5 +3,5 @@ package publisher
 import "context"
 
 type Publisher interface {
-	Publish(_ context.Context, topic string, message interface{}) error
+	Publish(_ context.Context, content any) error
 }

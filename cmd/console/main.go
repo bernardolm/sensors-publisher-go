@@ -2,116 +2,99 @@ package main
 
 import (
 	"context"
+	"time"
 
-	log "github.com/sirupsen/logrus"
-
-	"github.com/bernardolm/sensors-publisher-go/config"
-	formatterhomeassistant "github.com/bernardolm/sensors-publisher-go/formatter/homeassistant"
-	formatterinfluxdb "github.com/bernardolm/sensors-publisher-go/formatter/influxdb"
-	"github.com/bernardolm/sensors-publisher-go/infrastructure/influxdb"
-	"github.com/bernardolm/sensors-publisher-go/infrastructure/mqtt"
-	sqlitequeue "github.com/bernardolm/sensors-publisher-go/infrastructure/sqlite"
-	"github.com/bernardolm/sensors-publisher-go/logging"
-	"github.com/bernardolm/sensors-publisher-go/publisher"
-	publisherinfluxdb "github.com/bernardolm/sensors-publisher-go/publisher/influxdb"
-	publishermqtt "github.com/bernardolm/sensors-publisher-go/publisher/mqtt"
-	publisherstdout "github.com/bernardolm/sensors-publisher-go/publisher/stdout"
-	sensords18a20 "github.com/bernardolm/sensors-publisher-go/sensor/ds18a20"
-	sensormock "github.com/bernardolm/sensors-publisher-go/sensor/mock"
-	"github.com/bernardolm/sensors-publisher-go/worker"
+	fhass "github.com/bernardolm/sensors-publisher-go/formatter/homeassistant"
+	"github.com/bernardolm/sensors-publisher-go/infrastructure/config"
+	"github.com/bernardolm/sensors-publisher-go/infrastructure/logging"
+	imqtt "github.com/bernardolm/sensors-publisher-go/infrastructure/mqtt"
+	pmqtt "github.com/bernardolm/sensors-publisher-go/publisher/mqtt"
+	"github.com/bernardolm/sensors-publisher-go/sensor/ds18b20"
+	"github.com/bernardolm/sensors-publisher-go/sensor/mock"
 )
 
 func main() {
+	logging.Log.Info("cmd.console: starting")
+
 	config.Load()
+
 	logging.Init()
 
 	ctx := context.Background()
 	ctx, ctxCancelFunc := context.WithCancel(ctx)
 	defer ctxCancelFunc()
 
-	if err := mqtt.Connect(ctx); err != nil {
-		log.Error(err)
-	}
+	//
+	//
+	// bootstrap - begin
+	//
+	//
 
-	influxdb.Start(ctx)
+	mockSensor := mock.New(ctx)
 
-	queuePath := config.Get[string]("SQLITE_PATH")
-	if queuePath == "" {
-		queuePath = "./queue.db"
-	}
-
-	queueBatch := config.Get[int]("SQLITE_FLUSH_BATCH")
-	queue, err := sqlitequeue.New(queuePath, queueBatch)
+	ds18b20Sensor, err := ds18b20.New(ctx)
 	if err != nil {
-		log.WithError(err).Warn("sqlite queue: disabled")
+		if !config.Get[bool]("DEBUG") {
+			panic(err)
+		}
 	}
 
-	if queue != nil {
-		defer func() {
-			if err := queue.Close(); err != nil {
-				log.WithError(err).Warn("sqlite queue: close failed")
+	hassFormatter, err := fhass.New(ctx)
+	if err != nil {
+		panic(err)
+	}
+
+	mqttClient, err := imqtt.New(ctx)
+	if err != nil {
+		panic(err)
+	}
+
+	mqttPublisher, err := pmqtt.New(ctx, mqttClient)
+	if err != nil {
+		panic(err)
+	}
+
+	//
+	//
+	// bootstrap - end
+	//
+	//
+
+	queueWorkerDelta := config.Get[time.Duration]("QUEUE_WORKER_DELTA")
+	if queueWorkerDelta == 0 {
+		queueWorkerDelta = 5 * 60 * time.Second
+	}
+
+	publisherWorkerDelta := config.Get[time.Duration]("PUBLISHER_WORKER_DELTA")
+	if publisherWorkerDelta == 0 {
+		publisherWorkerDelta = 5 * 60 * time.Second
+	}
+
+	for true {
+		if config.Get[bool]("DEBUG") {
+			mockContent, err := hassFormatter.Build(mockSensor)
+			if err != nil {
+				panic(err)
 			}
-		}()
-	}
 
-	pbMqtt := publishermqtt.New(queue)
-	pbInfluxdb := publisherinfluxdb.New(queue)
-	pbStdout := publisherstdout.New()
-	w := worker.New()
-
-	ds, err := sensords18a20.New()
-	if err != nil {
-		log.Error(err)
-	}
-
-	for i := range ds {
-		fha, err := formatterhomeassistant.New(ds[i])
-		if err != nil {
-			log.Error(err)
+			if err := mqttPublisher.Publish(ctx, mockContent); err != nil {
+				panic(err)
+			}
 		}
-		w.AddFlow(ds[i], fha, []publisher.Publisher{pbStdout, pbMqtt})
 
-		fidb, err := formatterinfluxdb.New(ds[i])
-		if err != nil {
-			log.Error(err)
+		for _, s := range ds18b20Sensor {
+			content, err := hassFormatter.Build(s)
+			if err != nil {
+				panic(err)
+			}
+
+			if err := mqttPublisher.Publish(ctx, content); err != nil {
+				panic(err)
+			}
 		}
-		w.AddFlow(ds[i], fidb, []publisher.Publisher{pbStdout, pbInfluxdb})
+
+		time.Sleep(publisherWorkerDelta)
 	}
 
-	if len(ds) == 0 { // entering in DEBUG mode
-		sm := sensormock.New()
-
-		fha, err := formatterhomeassistant.New(sm)
-		if err != nil {
-			log.Error(err)
-		}
-		w.AddFlow(sm, fha, []publisher.Publisher{pbStdout, pbMqtt})
-
-		fidb, err := formatterinfluxdb.New(sm)
-		if err != nil {
-			log.Error(err)
-		}
-		w.AddFlow(sm, fidb, []publisher.Publisher{pbStdout, pbInfluxdb})
-	}
-
-	w.Start(ctx)
-
-	ec := make(chan error)
-
-	select {
-	case err := <-ec:
-		log.Warn("cmd: received message on error channel")
-		log.Error(err)
-	case <-ctx.Done():
-		log.Warn("cmd: context done, context cancel func called")
-	}
-
-	if err := w.Stop(ctx); err != nil {
-		log.Error(err)
-	}
-
-	mqtt.Close(ctx)
-	influxdb.Finish(ctx)
-
-	log.Info("cmd: graceful shutdown complete")
+	logging.Log.Info("cmd.console: graceful shutdown complete")
 }

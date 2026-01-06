@@ -3,54 +3,22 @@ package worker
 import (
 	"context"
 	"time"
-
-	log "github.com/sirupsen/logrus"
-
-	"github.com/bernardolm/sensors-publisher-go/config"
-	"github.com/bernardolm/sensors-publisher-go/formatter"
-	"github.com/bernardolm/sensors-publisher-go/publisher"
-	"github.com/bernardolm/sensors-publisher-go/sensor"
 )
+
+type taskFunc func(any) (any, error)
 
 type worker struct {
 	delta time.Duration
-	flows []flow
-	// sc chan os.Signal
+	flows [][]taskFunc
 }
 
-func (w *worker) AddFlow(s sensor.Sensor, f formatter.Formatter, p []publisher.Publisher) {
-	w.flows = append(w.flows, flow{
-		sensor:     s,
-		formatter:  f,
-		publishers: p,
-	})
-}
-
-func (w *worker) Start(ctx context.Context) {
-	log.Debug("worker: starting")
-	go func() {
-		for {
-			for _, flow := range w.flows {
-				flow.Start(ctx)
-			}
-			log.Debugf("worker: waiting %s", w.delta)
-			time.Sleep(w.delta)
-		}
-	}()
-}
-
-func (w *worker) Stop(_ context.Context) error {
-	log.Info("worker: stopped")
-	return nil
-}
-
-func New() *worker {
+func New(_ context.Context, delta time.Duration) *worker {
 	w := worker{
-		delta: config.Get[time.Duration]("WORKER_DELTA"),
+		delta: delta,
 	}
 
 	if w.delta == 0 {
-		w.delta = 5 * 60 * time.Second
+		w.delta = 5 * 60 * time.Second // five minutes
 	}
 
 	return &w
