@@ -5,12 +5,12 @@ import (
 	"time"
 
 	fhass "github.com/bernardolm/sensors-publisher-go/pkg/domain/formatter/homeassistant"
-	"github.com/bernardolm/sensors-publisher-go/pkg/infrastructure/config"
-	"github.com/bernardolm/sensors-publisher-go/pkg/infrastructure/logging"
-	imqtt "github.com/bernardolm/sensors-publisher-go/pkg/infrastructure/mqtt"
 	pmqtt "github.com/bernardolm/sensors-publisher-go/pkg/domain/publisher/mqtt"
 	"github.com/bernardolm/sensors-publisher-go/pkg/domain/sensor/ds18b20"
 	"github.com/bernardolm/sensors-publisher-go/pkg/domain/sensor/mock"
+	"github.com/bernardolm/sensors-publisher-go/pkg/infrastructure/config"
+	"github.com/bernardolm/sensors-publisher-go/pkg/infrastructure/logging"
+	imqtt "github.com/bernardolm/sensors-publisher-go/pkg/infrastructure/mqtt"
 )
 
 func main() {
@@ -60,14 +60,14 @@ func main() {
 	//
 	//
 
-	queueWorkerDelta := config.Get[time.Duration]("QUEUE_WORKER_DELTA")
-	if queueWorkerDelta == 0 {
-		queueWorkerDelta = 5 * 60 * time.Second
-	}
+	// queueWorkerDelta := config.Get[time.Duration]("QUEUE_WORKER_DELTA")
+	// if queueWorkerDelta == 0 {
+	// 	queueWorkerDelta = time.Duration(5*60) * time.Second
+	// }
 
 	publisherWorkerDelta := config.Get[time.Duration]("PUBLISHER_WORKER_DELTA")
 	if publisherWorkerDelta == 0 {
-		publisherWorkerDelta = 5 * 60 * time.Second
+		publisherWorkerDelta = time.Duration(5*60) * time.Second
 	}
 
 	for {
@@ -95,6 +95,4 @@ func main() {
 
 		time.Sleep(publisherWorkerDelta)
 	}
-
-		logging.Log.Info("cmd.console: graceful shutdown complete")
 }

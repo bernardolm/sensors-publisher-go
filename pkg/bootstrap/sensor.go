@@ -3,10 +3,10 @@ package bootstrap
 import (
 	"context"
 
-	"github.com/bernardolm/sensors-publisher-go/pkg/infrastructure/config"
 	"github.com/bernardolm/sensors-publisher-go/pkg/domain/sensor"
 	"github.com/bernardolm/sensors-publisher-go/pkg/domain/sensor/ds18b20"
 	"github.com/bernardolm/sensors-publisher-go/pkg/domain/sensor/mock"
+	"github.com/bernardolm/sensors-publisher-go/pkg/infrastructure/config"
 )
 
 var (

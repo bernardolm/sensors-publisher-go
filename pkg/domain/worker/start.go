@@ -17,6 +17,7 @@ func (w *worker) Start() error {
 				content, err = task(content)
 				if err != nil {
 					logging.Log.Error(err)
+
 					break tasker
 				}
 			}
