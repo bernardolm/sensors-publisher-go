@@ -1,0 +1,10 @@
+github.com/air-verse/air@latest
+github.com/fdaines/spm-go@latest
+github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest
+github.com/jackc/tern/v2@latest
+github.com/maxbrunsfeld/counterfeiter/v6@latest
+github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest
+github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+goa.design/model/cmd/mdl@latest
+goa.design/model/cmd/stz@latest
+golang.org/x/vuln/cmd/govulncheck@latest

@@ -1,0 +1,103 @@
+version: "2"
+
+formatters:
+  enable:
+    - goimports
+    - gofmt
+    - golines
+  exclusions:
+    generated: lax
+    warn-unused: true
+    # paths:
+    #   - ^\.cursor/
+    #   - ^\.git/
+    #   - ^\.githooks/
+    #   - ^\.github/
+    #   - ^\.vscode/
+    #   - ^bin/
+    #   - ^dev/
+    #   - ^docs/
+    #   - ^tmp/
+    #   - ^vendor/
+  settings:
+    gofmt:
+      # gofmt -e -l -s -w -r 'interface{} -> any'
+      simplify: true
+      rewrite-rules:
+        - pattern: "interface{}"
+          replacement: "any"
+    goimports:
+      # goimports -e -l -w
+      local-prefixes:
+        - github.com/bernardolm/sensors-publisher-go
+    golines:
+      # golines --base-formatter='/bin/cat' --chain-split-dots --ignore-generated --max-len=120 --reformat-tags --shorten-comments --tab-len=2 --write-output
+      chain-split-dots: true
+      max-len: 120
+      reformat-tags: true
+      shorten-comments: true
+      tab-len: 2
+
+linters:
+  default: fast
+  enable:
+    - gomodguard_v2
+    - govet
+  disable:
+    - cyclop
+    - depguard
+    - dogsled
+    - embeddedstructfieldcheck
+    - funcorder
+    - funlen
+    - gochecknoinits
+    - gocognit
+    - gocyclo
+    - godoclint
+    - godot
+    - godox
+    - gomodguard
+    - inamedparam
+    - interfacebloat
+    - lll
+    - maintidx
+    - mnd
+    - nestif
+    - wsl
+  exclusions:
+    generated: lax
+    warn-unused: true
+    # paths:
+    #   - ^\.cursor/
+    #   - ^\.git/
+    #   - ^\.githooks/
+    #   - ^\.github/
+    #   - ^\.vscode/
+    #   - ^bin/
+    #   - ^dev/
+    #   - ^docs/
+    #   - ^tmp/
+    #   - ^vendor/
+  settings:
+    govet:
+      enable-all: true
+      disable:
+        - shadow
+        - fieldalignment
+
+# issues:
+#   fix: true
+#   max-issues-per-linter: 1
+#   max-same-issues: 1
+
+# output:
+#   show-stats: false
+
+run:
+  allow-parallel-runners: true
+  issues-exit-code: 0
+  tests: false
+  timeout: 5m
+
+severity:
+  default: error

@@ -1,0 +1,4 @@
+# /etc/modules-load.d/w1.conf
+
+w1-gpio
+w1-therm
