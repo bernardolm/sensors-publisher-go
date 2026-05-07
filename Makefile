@@ -1,5 +1,5 @@
 .ONESHELL:
-.PHONY: format lint
+.PHONY: format lint bin docker reset config
 
 ifneq (,$(wildcard ./.env))
 	include ./.env
@@ -11,7 +11,7 @@ PWD = $(shell pwd)
 define docker_build
 	. ./dev/build/envs.sh \
 	&& IMAGE="$${APP_NAME}:$${STAGE}" \
-	&& if ! docker image inspect "$${IMAGE}" >/dev/null 2>&1; then \
+	&& if [ "$${STAGE}" = "dev" ] || ! docker image inspect "$${IMAGE}" >/dev/null 2>&1; then \
 		echo "> docker building $${IMAGE}... "; \
 		mkdir -p bin ; \
 		docker build --target "$${STAGE}" \
@@ -45,7 +45,7 @@ define docker_golangci
 		-v "$${APP_NAME}-go-build-cache:/root/.cache/go-build" \
 		-w /usr/app \
 		"$${APP_NAME}:$${STAGE}" \
-		go tool golangci-lint --verbose "$${GOLANGCI_COMMAND}" "$${GOLANGCI_FILE_LIST}"
+		golangci-lint --verbose "$${GOLANGCI_COMMAND}" "$${GOLANGCI_FILE_LIST}"
 endef
 
 bin: export STAGE=build
@@ -55,7 +55,7 @@ bin:
 	$(docker_build)
 
 format:
-	@export GOLANGCI_COMMAND=fmt GOLANGCI_FILE_LIST=./.. \
+	@export GOLANGCI_COMMAND=fmt GOLANGCI_FILE_LIST=./... \
 	&& $(docker_golangci)
 
 lint:

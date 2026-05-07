@@ -11,6 +11,8 @@ import (
 	"github.com/spf13/cast"
 )
 
+var Version string
+
 // Load env vars and config file to get app config
 func Load() {
 	filenames := []string{".env"}
@@ -47,6 +49,7 @@ func Get[T any](key string) T {
 
 	if rawValue == "" {
 		e.Debug("config.Get: value not found or not exist")
+
 		return out
 	}
 

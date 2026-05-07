@@ -6,13 +6,14 @@ RUN go mod download -x
 FROM base AS dev
 WORKDIR /usr/app
 COPY packages.golang .
-RUN go get -tool $(/bin/cat packages.golang)
+RUN xargs -n 1 go install < packages.golang
 
 FROM base AS basebuild
 WORKDIR /usr/app
 ARG APP_LDFLAGS
 ARG APP_NAME
 ARG APP_CMD_PATH
+COPY . .
 RUN true \
 	&& go build -tags="sonic avx" \
 	-ldflags "-w -s ${APP_LDFLAGS}" \
