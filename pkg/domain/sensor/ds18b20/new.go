@@ -4,9 +4,10 @@ import (
 	"context"
 	"strings"
 
+	yryzds18b20 "github.com/yryz/ds18b20"
+
 	"github.com/bernardolm/sensors-publisher-go/pkg/domain/formatter/homeassistant/api"
 	"github.com/bernardolm/sensors-publisher-go/pkg/infrastructure/logging"
-	yryzds18b20 "github.com/yryz/ds18b20"
 )
 
 func New(_ context.Context) ([]*ds18b20, error) {
@@ -17,6 +18,7 @@ func New(_ context.Context) ([]*ds18b20, error) {
 
 	if len(sensorIDs) == 0 {
 		logging.Log.Debug("ds18b20 sensor: ds18b20 not found")
+
 		return nil, nil
 	}
 

@@ -5,14 +5,16 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/bernardolm/sensors-publisher-go/pkg/domain/formatter/homeassistant/api"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
+
+	"github.com/bernardolm/sensors-publisher-go/pkg/domain/formatter/homeassistant/api"
 )
 
 func New(_ context.Context) *mock {
 	return &mock{
-		// picture:           "https://www.pmi.org/-/media/pmi/microsites/disciplined-agile/the-design-patterns/crashtestdummy.jpg",
+		// picture:
+		// "https://www.pmi.org/-/media/pmi/microsites/disciplined-agile/the-design-patterns/crashtestdummy.jpg",
 		caser:             cases.Title(language.BrazilianPortuguese),
 		class:             string(api.AtmosphericPressureDeviceClass),
 		icon:              "mdi: test-tube",

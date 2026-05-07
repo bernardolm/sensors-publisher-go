@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+
 	"github.com/bernardolm/sensors-publisher-go/pkg/infrastructure/logging"
 )
 

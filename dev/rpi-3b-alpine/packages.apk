@@ -1,3 +1,4 @@
+
 alpine-conf
 avahi
 bind-tools
@@ -18,6 +19,7 @@ nano
 ncdu
 nmap
 openrc
+shadow
 starship
 sudo
 tcpdump
@@ -29,4 +31,3 @@ util-linux
 wget
 zram-init
 zsh
-

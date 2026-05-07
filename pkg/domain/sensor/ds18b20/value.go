@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/bernardolm/sensors-publisher-go/pkg/infrastructure/logging"
 	yryzds18b20 "github.com/yryz/ds18b20"
+
+	"github.com/bernardolm/sensors-publisher-go/pkg/infrastructure/logging"
 )
 
 func (s *ds18b20) Value() (any, error) {
