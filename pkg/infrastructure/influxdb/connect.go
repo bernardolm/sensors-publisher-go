@@ -5,8 +5,9 @@ import (
 	"crypto/tls"
 	"errors"
 
-	"github.com/bernardolm/sensors-publisher-go/pkg/infrastructure/logging"
 	influx "github.com/influxdata/influxdb-client-go"
+
+	"github.com/bernardolm/sensors-publisher-go/pkg/infrastructure/logging"
 )
 
 func (c *Client) connect(_ context.Context) error {

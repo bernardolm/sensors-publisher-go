@@ -4,8 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/bernardolm/sensors-publisher-go/pkg/infrastructure/logging"
 	eclipsemqtt "github.com/eclipse/paho.mqtt.golang"
+
+	"github.com/bernardolm/sensors-publisher-go/pkg/infrastructure/logging"
 )
 
 func (c *Client) connect(_ context.Context) error {
@@ -41,6 +42,7 @@ func (c *Client) connect(_ context.Context) error {
 		logging.Log.
 			WithError(token.Error()).
 			Error("mqtt: failed to connect")
+
 		return token.Error()
 	}
 

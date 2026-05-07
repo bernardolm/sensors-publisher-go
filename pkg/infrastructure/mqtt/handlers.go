@@ -3,8 +3,9 @@ package mqtt
 import (
 	"sync"
 
-	"github.com/bernardolm/sensors-publisher-go/pkg/infrastructure/logging"
 	eclipsemqtt "github.com/eclipse/paho.mqtt.golang"
+
+	"github.com/bernardolm/sensors-publisher-go/pkg/infrastructure/logging"
 )
 
 var sorh = sync.Once{}

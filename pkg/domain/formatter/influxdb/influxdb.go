@@ -26,5 +26,6 @@ func (a *influxdb) Build(s sensor.Sensor) (any, error) {
 
 func New(ctx context.Context) (*influxdb, error) {
 	f := influxdb{}
+
 	return &f, nil
 }

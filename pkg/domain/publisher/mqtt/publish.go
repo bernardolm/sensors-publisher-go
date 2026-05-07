@@ -5,9 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/bernardolm/sensors-publisher-go/pkg/infrastructure/logging"
 	"github.com/k0kubun/pp/v3"
 	"github.com/tidwall/pretty"
+
+	"github.com/bernardolm/sensors-publisher-go/pkg/infrastructure/logging"
 )
 
 func (a *mqtt) Publish(ctx context.Context, content any) error {
@@ -19,13 +20,13 @@ func (a *mqtt) Publish(ctx context.Context, content any) error {
 
 	payloads, ok := content.([]any)
 	if !ok {
-		return fmt.Errorf("publisher: mqtt payload in unkown type %T", content)
+		return fmt.Errorf("publisher: mqtt payload in unknown type %T", content)
 	}
 
 	for _, p := range payloads {
 		b, ok := p.([]byte)
 		if !ok {
-			return fmt.Errorf("publisher: mqtt payload in unkown type %T", content)
+			return fmt.Errorf("publisher: mqtt payload in unknown type %T", content)
 		}
 
 		e = e.

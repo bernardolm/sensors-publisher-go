@@ -4,10 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/bernardolm/sensors-publisher-go/pkg/domain/formatter/homeassistant/api"
-	"github.com/bernardolm/sensors-publisher-go/pkg/infrastructure/config"
-	"github.com/bernardolm/sensors-publisher-go/pkg/domain/sensor"
 	"github.com/k0kubun/pp/v3"
+
+	"github.com/bernardolm/sensors-publisher-go/pkg/domain/formatter/homeassistant/api"
+	"github.com/bernardolm/sensors-publisher-go/pkg/domain/sensor"
+	"github.com/bernardolm/sensors-publisher-go/pkg/infrastructure/config"
 )
 
 // https://www.home-assistant.io/integrations/mqtt/#device-discovery-payload

@@ -35,6 +35,7 @@ func (c *Client) Publish(topic string, qos byte, retained bool, payload any) err
 		e.
 			WithError(token.Error()).
 			Error("mqtt: failed to publish")
+
 		return token.Error()
 	}
 

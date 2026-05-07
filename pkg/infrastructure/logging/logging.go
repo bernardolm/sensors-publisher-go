@@ -3,9 +3,10 @@ package logging
 import (
 	"os"
 
-	"github.com/bernardolm/sensors-publisher-go/pkg/infrastructure/config"
 	"github.com/sirupsen/logrus"
 	"github.com/yukitsune/lokirus"
+
+	"github.com/bernardolm/sensors-publisher-go/pkg/infrastructure/config"
 )
 
 var Log = logrus.StandardLogger()

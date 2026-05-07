@@ -2,6 +2,7 @@ package mqtt
 
 import (
 	"fmt"
+	"net"
 	// "github.com/bernardolm/sensors-publisher-go/pkg/infrastructure/config"
 	// "github.com/bernardolm/sensors-publisher-go/pkg/infrastructure/logging"
 	// eclipsemqtt "github.com/eclipse/paho.mqtt.golang"
@@ -16,5 +17,5 @@ func (c *Client) config() {
 		c.port = 1883
 	}
 
-	c.url = fmt.Sprintf("tcp://%s:%d", c.host, c.port)
+	c.url = "tcp://" + net.JoinHostPort(c.host, fmt.Sprint(rune(c.port)))
 }

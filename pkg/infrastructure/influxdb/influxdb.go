@@ -4,10 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/bernardolm/sensors-publisher-go/pkg/infrastructure/config"
-	"github.com/bernardolm/sensors-publisher-go/pkg/infrastructure/logging"
 	influx "github.com/influxdata/influxdb-client-go"
 	influxapi "github.com/influxdata/influxdb-client-go/api"
+
+	"github.com/bernardolm/sensors-publisher-go/pkg/infrastructure/config"
+	"github.com/bernardolm/sensors-publisher-go/pkg/infrastructure/logging"
 )
 
 type Client struct {
@@ -30,6 +31,7 @@ func New(ctx context.Context) (*Client, error) {
 
 	if c.url == "" {
 		logging.Log.Warnf("influxdb: no host configured")
+
 		return nil, nil
 	}
 

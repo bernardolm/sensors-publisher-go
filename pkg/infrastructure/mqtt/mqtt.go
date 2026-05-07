@@ -3,10 +3,11 @@ package mqtt
 import (
 	"context"
 
-	"github.com/bernardolm/sensors-publisher-go/pkg/infrastructure/config"
-	"github.com/bernardolm/sensors-publisher-go/pkg/infrastructure/logging"
 	eclipsemqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/k0kubun/pp/v3"
+
+	"github.com/bernardolm/sensors-publisher-go/pkg/infrastructure/config"
+	"github.com/bernardolm/sensors-publisher-go/pkg/infrastructure/logging"
 )
 
 type Client struct {
@@ -32,6 +33,7 @@ func NewWithStore(ctx context.Context, store eclipsemqtt.Store) (*Client, error)
 
 	if c.host == "" {
 		logging.Log.Warnf("mqtt: no host configured")
+
 		return nil, nil
 	}
 
