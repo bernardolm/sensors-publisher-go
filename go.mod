@@ -1,9 +1,9 @@
 module github.com/bernardolm/sensors-publisher-go
 
-go 1.26
+go 1.26.0
 
 require (
-	github.com/aws/aws-sdk-go-v2 v1.41.7
+	github.com/aws/aws-sdk-go-v2 v1.41.9
 	github.com/eclipse/paho.mqtt.golang v1.5.1
 	github.com/influxdata/influxdb-client-go v1.4.0
 	github.com/joho/godotenv v1.5.1
@@ -13,12 +13,12 @@ require (
 	github.com/tidwall/pretty v1.2.1
 	github.com/yryz/ds18b20 v0.0.0-20200527154408-4a8f84bb82d4
 	github.com/yukitsune/lokirus v1.0.1
-	golang.org/x/text v0.36.0
-	modernc.org/sqlite v1.50.0
+	golang.org/x/text v0.37.0
+	modernc.org/sqlite v1.51.0
 )
 
 require (
-	github.com/aws/smithy-go v1.25.1 // indirect
+	github.com/aws/smithy-go v1.26.0 // indirect
 	github.com/deepmap/oapi-codegen v1.3.6 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/google/uuid v1.6.0 // indirect
@@ -38,7 +38,7 @@ require (
 	golang.org/x/sync v0.20.0 // indirect
 	golang.org/x/sys v0.42.0 // indirect
 	gopkg.in/yaml.v2 v2.2.5 // indirect
-	modernc.org/libc v1.72.0 // indirect
+	modernc.org/libc v1.72.3 // indirect
 	modernc.org/mathutil v1.7.1 // indirect
 	modernc.org/memory v1.11.0 // indirect
 )
