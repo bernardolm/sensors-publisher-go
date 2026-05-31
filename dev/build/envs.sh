@@ -4,10 +4,6 @@ function app_name() {
 	basename ${PWD}
 }
 
-function app_cmd_path() {
-	echo './cmd/cli/main.go'
-}
-
 function app_ldflags() {
 	local commit_hash=$(git rev-parse --short HEAD)
 	local is_dirty="no"
@@ -28,10 +24,14 @@ function app_ldflags() {
 	echo "-X ${ns}/pkg/infrastructure/config.Version=${version}"
 }
 
-export APP_LDFLAGS=$(app_ldflags)
+export APP_CMD_PATH='cmd/cli/main.go'
+export APP_LDFLAGS="-w -s $(app_ldflags)"
 export APP_NAME=$(app_name)
-export APP_CMD_PATH=$(app_cmd_path)
+export APP_TAGS='sonic avx'
+export APP_BIN_PATH="bin/${APP_NAME}-${GOOS}-${GOARCH}${GOARM:+v${GOARM}}"
 
-echo "APP_LDFLAGS is '${APP_LDFLAGS}'"
-echo "APP_NAME is '${APP_NAME}'"
-echo "APP_CMD_PATH is '${APP_CMD_PATH}'"
+test -z "$DEBUG" || echo "APP_CMD_PATH:	${APP_CMD_PATH}"
+test -z "$DEBUG" || echo "APP_LDFLAGS:	${APP_LDFLAGS}"
+test -z "$DEBUG" || echo "APP_NAME:	${APP_NAME}"
+test -z "$DEBUG" || echo "APP_TAGS:	${APP_TAGS}"
+test -z "$DEBUG" || echo "APP_BIN_PATH:	${APP_BIN_PATH}"

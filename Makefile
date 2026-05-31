@@ -1,5 +1,5 @@
 .ONESHELL:
-.PHONY: format lint bin docker reset config
+.PHONY: build-darwin-arm64 build-linux-amd64 build-linux-armv7 build config deploy format gotools lint reset
 
 ifneq (,$(wildcard ./.env))
 	include ./.env
@@ -8,76 +8,31 @@ endif
 
 PWD = $(shell pwd)
 
-define docker_build
-	. ./dev/build/envs.sh \
-	&& IMAGE="$${APP_NAME}:$${STAGE}" \
-	&& if [ "$${STAGE}" = "dev" ] || ! docker image inspect "$${IMAGE}" >/dev/null 2>&1; then \
-		echo "> docker building $${IMAGE}... "; \
-		mkdir -p bin ; \
-		docker build --target "$${STAGE}" \
-			$${DOCKER_BUILD_EXTRA_ARGS} \
-			--build-arg APP_CMD_PATH \
-			--build-arg APP_LDFLAGS \
-			--build-arg APP_NAME \
-			--tag "$${IMAGE}" .; \
-	fi
-endef
+build-darwin-arm64:
+	GOOS=darwin GOARCH=arm64 . ./dev/build/build.sh
 
-define docker_run
-	export STAGE=base \
-	&& $(docker_build) \
-	&& . ./dev/build/envs.sh \
-	&& docker run -t --rm \
-		--env-file .env \
-		-v "$(PWD):/usr/app" \
-		-v "$${APP_NAME}-go-build-cache:/root/.cache/go-build" \
-		-w /usr/app \
-		"$${APP_NAME}:$${STAGE}" \
-		go run "$${APP_CMD_PATH}" $${CLI_COMMAND} $${CLI_ARGS}
-endef
+build-linux-amd64:
+	GOOS=linux GOARCH=amd64 . ./dev/build/build.sh
 
-define docker_golangci
-	export STAGE=dev \
-	&& $(docker_build) \
-	&& . ./dev/build/envs.sh \
-	&& docker run -t --rm \
-		-v "$(PWD):/usr/app" \
-		-v "$${APP_NAME}-go-build-cache:/root/.cache/go-build" \
-		-w /usr/app \
-		"$${APP_NAME}:$${STAGE}" \
-		golangci-lint --verbose "$${GOLANGCI_COMMAND}" "$${GOLANGCI_FILE_LIST}"
-endef
+build-linux-armv7:
+	GOOS=linux GOARCH=arm GOARM=7 . ./dev/build/build.sh
 
-bin: export STAGE=build
-bin: export DOCKER_BUILD_EXTRA_ARGS=--output type=local,dest=./bin
-bin:
-	rm -rf bin || true
-	$(docker_build)
-
-format:
-	@export GOLANGCI_COMMAND=fmt GOLANGCI_FILE_LIST=./... \
-	&& $(docker_golangci)
-
-lint:
-	@export GOLANGCI_COMMAND=run GOLANGCI_FILE_LIST=./... \
-	&& $(docker_golangci)
-
-run:
-	@export CLI_COMMAND=foobar \
-	&& $(docker_run)
-
-docker-destroy:
-	docker compose stop
-	docker compose rm -f
-
-docker:
-	eval docker compose up --remove-orphans $(DOCKER_ARGS)
-
-reset:
-	reset
+build: build-darwin-arm64 build-linux-amd64 build-linux-armv7
 
 config:
 	ln -sf "$(PWD)/.githooks/pre-commit" "$(PWD)/.git/hooks/pre-commit"
 
+deploy:
+	. ./dev/deploy/dockerx.sh
+
+format:
+	golangci-lint fmt --verbose ./...
+
 gotools:
-	go get -tool $(shell /bin/cat packages.golang)
+	go get -tool $(shell /bin/cat dev/packages.golang)
+
+lint:
+	golangci-lint run --verbose ./...
+
+reset:
+	reset
