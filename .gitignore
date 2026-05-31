@@ -17,4 +17,5 @@
 *prompt*
 /*.json
 bin
+dev/deploy/app
 tmp*

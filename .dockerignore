@@ -9,7 +9,6 @@
 .golangci.yml
 .vscode
 AGENTS.md
-bin
 dev
 docker-compose.yml
 Dockerfile
