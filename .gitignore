@@ -5,6 +5,7 @@
 *.csv
 *.dump
 *.env
+!*.tpl.env
 *.key
 *.log
 *.pem
@@ -19,4 +20,3 @@
 bin
 dev/deploy/app
 tmp*
-

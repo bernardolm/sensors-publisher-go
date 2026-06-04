@@ -1,0 +1,22 @@
+#!/sbin/openrc-run
+
+name="${APP_PACKAGE_NAME}"
+description="Sensors publisher service"
+command="/usr/bin/${APP_PACKAGE_NAME}"
+command_background="yes"
+command_user="root:root"
+pidfile="/run/$RC_SVCNAME.pid"
+config_file="${APP_CONFIG_PATH}"
+
+depend() {
+	need net
+	after firewall
+}
+
+start_pre() {
+	if [ -f "$config_file" ]; then
+		set -a
+		. "$config_file"
+		set +a
+	fi
+}
