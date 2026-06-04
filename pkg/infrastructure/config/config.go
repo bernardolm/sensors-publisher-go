@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/joho/godotenv"
-	_ "github.com/joho/godotenv/autoload"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
 )
@@ -15,24 +14,24 @@ var Version string
 
 // Load env vars and config file to get app config
 func Load() {
-	filenames := []string{".env"}
-
-	if configFile := os.Getenv("SENSORS_PUBLISHER_CONFIG"); configFile != "" {
-		filenames = append(filenames, configFile)
-	}
-
-	if os.Getenv("DEBUG") == "" || os.Getenv("DEBUG") == "false" {
-		filenames = append(filenames, "/etc/sensors-publisher-go/sensors-publisher-go.env")
-		filenames = append(filenames, "/sensors-publisher-go/.env")
+	filenames := []string{
+		"/etc/sensors-publisher-go/config.env",
+		".env",
 	}
 
 	for _, filename := range filenames {
-		if err := godotenv.Load(filename); err != nil && !os.IsNotExist(err) {
+		if _, err := os.Stat(filename); os.IsNotExist(err) {
+			continue
+		}
+
+		if err := godotenv.Overload(filename); err != nil {
 			log.
 				WithError(err).
 				WithField("filename", filename).
 				Warn("config.Load: error loading env file")
 		}
+
+		return
 	}
 }
 

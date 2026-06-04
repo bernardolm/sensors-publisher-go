@@ -5,8 +5,6 @@ import (
 	"path/filepath"
 	"testing"
 	"time"
-
-	_ "github.com/joho/godotenv/autoload"
 )
 
 func TestGetBool(t *testing.T) {
@@ -87,23 +85,30 @@ func TestGetInvalidKey(t *testing.T) {
 	}
 }
 
-func TestLoadCustomConfigPath(t *testing.T) {
-	configFile := filepath.Join(t.TempDir(), "sensors-publisher-go.env")
+func TestLoadDevConfigPath(t *testing.T) {
+	configFile := filepath.Join(t.TempDir(), ".env")
 
-	if err := os.WriteFile(configFile, []byte("TEST_CUSTOM_CONFIG=loaded\n"), 0600); err != nil {
+	if err := os.WriteFile(configFile, []byte("TEST_DEV_CONFIG=loaded\n"), 0600); err != nil {
 		t.Fatal(err)
 	}
 
-	t.Setenv("SENSORS_PUBLISHER_CONFIG", configFile)
-	t.Setenv("DEBUG", "true")
-	os.Unsetenv("TEST_CUSTOM_CONFIG")
-	t.Cleanup(func() {
-		os.Unsetenv("TEST_CUSTOM_CONFIG")
-	})
+	t.Chdir(filepath.Dir(configFile))
+	t.Setenv("TEST_DEV_CONFIG", "system")
+	defer os.Unsetenv("TEST_DEV_CONFIG")
 
 	Load()
 
-	if got := Get[string]("TEST_CUSTOM_CONFIG"); got != "loaded" {
-		t.Fatalf("expected custom config value to be loaded, got %q", got)
+	if got := Get[string]("TEST_DEV_CONFIG"); got != "loaded" {
+		t.Fatalf("expected dev config value to be loaded, got %q", got)
+	}
+}
+
+func TestLoadKeepsSystemEnvAvailable(t *testing.T) {
+	t.Setenv("TEST_SYSTEM_CONFIG", "system")
+
+	Load()
+
+	if got := Get[string]("TEST_SYSTEM_CONFIG"); got != "system" {
+		t.Fatalf("expected system env value to be available, got %q", got)
 	}
 }
