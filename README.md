@@ -2,7 +2,7 @@
 
 ## Raspberry Pi 3B Alpine deploy
 
-This project ships as a native Alpine `.apk` package built by GoReleaser inside Docker. The package installs the binary in `/usr/bin`, an OpenRC service in `/etc/init.d/sensors-publisher-go`, and app config in `/etc/sensors-publisher-go/sensors-publisher-go.env`.
+This project ships as a native Alpine `.apk` package built by GoReleaser inside Docker. The package installs the binary in `/usr/bin`, an OpenRC service in `/etc/init.d/sensors-publisher-go`, and app config in `/etc/sensors-publisher-go/config.env`.
 
 The Raspberry Pi builds intentionally use `CGO_ENABLED=0`. SQLite is provided by the pure-Go `modernc.org/sqlite` driver, so no Alpine ARM/musl cross compiler is required.
 
