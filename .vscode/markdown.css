@@ -1,0 +1,6 @@
+.markdown-body {
+	margin: 0 0 !important;
+	max-width: none !important;
+	padding: 0 0 !important;
+	width: calc(100% - 16px) !important;
+}

@@ -1,0 +1,111 @@
+version: 3
+workdir: .
+
+allow:
+  depOnAnyVendor: true
+  deepScan: true
+
+exclude:
+  - .git
+  - .githooks
+  - .omx
+  - .vscode
+  - assets
+  - bin
+
+components:
+  ddl: { in: dev/database/ddl }
+  cmd: { in: cmd/** }
+  contract: { in: pkg/contract/** }
+  domain: { in: pkg/domain/** }
+  usecase: { in: pkg/usecase/** }
+  adapter: { in: pkg/adapter/** }
+  config: { in: pkg/infrastructure/config }
+  influxdb: { in: pkg/infrastructure/database/influxdb }
+  logger: { in: pkg/infrastructure/logger }
+  mqtt: { in: pkg/infrastructure/messaging/mqtt }
+  infrastructure:
+    in:
+      - pkg/infrastructure/context
+      - pkg/infrastructure/database
+      - pkg/infrastructure/database/postgres
+      - pkg/infrastructure/database/sqlite
+      - pkg/infrastructure/errors
+      - pkg/infrastructure/http/**
+      - pkg/infrastructure/metrics/**
+      - pkg/infrastructure/sensor/**
+
+deps:
+  cmd:
+    mayDependOn:
+      - adapter
+      - config
+      - contract
+      - infrastructure
+      - influxdb
+      - logger
+      - mqtt
+      - usecase
+  contract:
+    mayDependOn:
+      - domain
+  domain:
+    mayDependOn:
+      - domain
+  usecase:
+    mayDependOn:
+      - adapter
+      - config
+      - contract
+      - domain
+      - influxdb
+      - logger
+      - mqtt
+      - usecase
+  adapter:
+    mayDependOn:
+      - adapter
+      - domain
+      - config
+      - contract
+      - infrastructure
+      - influxdb
+      - logger
+      - mqtt
+  config:
+    mayDependOn:
+      - contract
+      - infrastructure
+      - influxdb
+      - logger
+      - mqtt
+  influxdb:
+    mayDependOn:
+      - config
+      - contract
+      - infrastructure
+      - logger
+      - mqtt
+  logger:
+    mayDependOn:
+      - config
+      - contract
+      - infrastructure
+      - influxdb
+      - mqtt
+  mqtt:
+    mayDependOn:
+      - config
+      - contract
+      - infrastructure
+      - influxdb
+      - logger
+  infrastructure:
+    mayDependOn:
+      - config
+      - contract
+      - ddl
+      - infrastructure
+      - influxdb
+      - logger
+      - mqtt

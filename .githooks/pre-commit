@@ -24,7 +24,7 @@ if [ -s "${tmp_go_files}" ]; then
   printf "> formatting these files\n"
   tr '\0' '\n' < "${tmp_go_files}"
 
-  xargs -0 golangci fmt --verbose < "${tmp_go_files}"
+  make format GOLANGCI_FILE_LIST="${tmp_go_files}"
 fi
 
 echo "> pre-commit done"

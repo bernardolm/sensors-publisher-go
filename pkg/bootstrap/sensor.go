@@ -3,27 +3,25 @@ package bootstrap
 import (
 	"context"
 
-	"github.com/bernardolm/sensors-publisher-go/pkg/domain/sensor"
-	"github.com/bernardolm/sensors-publisher-go/pkg/domain/sensor/ds18b20"
-	"github.com/bernardolm/sensors-publisher-go/pkg/domain/sensor/mock"
-	"github.com/bernardolm/sensors-publisher-go/pkg/infrastructure/config"
+	"github.com/bernardolm/sensors-publisher-go/pkg/contract"
 )
 
-var (
-	ds18b20Sensor sensor.Sensor
-	mockSensor    sensor.Sensor
-)
+type SensorRepository struct {
+	client contract.SQLiteClient
+}
 
-func InitSersors(ctx context.Context) error {
-	if !config.Get[bool]("DEBUG") {
-		ds, err := ds18b20.New(ctx)
-		if err != nil {
-			return err
-		}
-		ds18b20Sensor = ds[0]
-	}
-
-	mockSensor = mock.New(ctx)
-
+func (o *SensorRepository) Register(ctx context.Context, sensor contract.SensorDevice) error {
+	o.client.DB(ctx).Exec("foobar")
 	return nil
 }
+
+func ProvideSensorRepository(
+	client contract.SQLiteClient,
+) contract.SensorRepository {
+	obj := SensorRepository{
+		client: client,
+	}
+	return &obj
+}
+
+// --------------

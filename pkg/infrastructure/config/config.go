@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -52,7 +53,7 @@ func Get[T any](key string) T {
 		return out
 	}
 
-	e = e.WithField("value", rawValue)
+	e = e.WithField("value", valueForLog(key, rawValue))
 
 	e.Debug("config.Get: value recovered")
 
@@ -75,4 +76,22 @@ func Get[T any](key string) T {
 	}
 
 	return value.(T)
+}
+
+// IsSet reports whether a configuration key has a non-empty value.
+func IsSet(key string) bool {
+	return os.Getenv(key) != ""
+}
+
+// valueForLog masks sensitive configuration values.
+func valueForLog(key string, value string) string {
+	sensitiveTerms := []string{"PASSWORD", "SECRET", "TOKEN", "DSN"}
+	upperKey := strings.ToUpper(key)
+	for _, term := range sensitiveTerms {
+		if strings.Contains(upperKey, term) {
+			return "[redacted]"
+		}
+	}
+
+	return value
 }

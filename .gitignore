@@ -3,11 +3,12 @@
 .DS_Store
 *.cert
 *.csv
+*.db*
 *.dump
 *.env
-!*.tpl.env
 *.key
 *.log
+*.omx
 *.pem
 *.pgpass
 *.txt
@@ -20,3 +21,5 @@
 bin
 dev/deploy/app
 tmp*
+
+!*.tpl.env

@@ -1,43 +1,28 @@
 # sensors-publisher-go
 
-## Raspberry Pi 3B Alpine deploy
+## Desenvolvimento
 
-This project ships as a native Alpine `.apk` package built by GoReleaser inside Docker. The package installs the binary in `/usr/bin`, an OpenRC service in `/etc/init.d/sensors-publisher-go`, and app config in `/etc/sensors-publisher-go/config.env`.
+As tarefas Go são executadas em contêineres Docker. Consulte [dev/docker/README.md](dev/docker/README.md) para os pré-requisitos e comandos disponíveis.
 
-The Raspberry Pi builds intentionally use `CGO_ENABLED=0`. SQLite is provided by the pure-Go `modernc.org/sqlite` driver, so no Alpine ARM/musl cross compiler is required.
+O serviço persiste cada temperatura e os metadados do sensor no SQLite local antes de qualquer integração de rede. MQTT, PostgreSQL e InfluxDB leem exclusivamente essa base local; PostgreSQL recebe somente uma replicação de escrita do SQLite. O fluxo, as tabelas e as regras de reenvio estão definidos em [SPECS.md](SPECS.md#persistência-e-entrega-de-temperaturas). As variáveis disponíveis estão em [.env.sample](.env.sample).
 
-The development commands also run through Docker targets from `dev/docker/Dockerfile`:
+## Raspberry Pi 3B
 
-```bash
-make watch
-make format
-make lint
-make package-pi
-```
-
-Create the deploy config:
-
-```bash
-cp deploy/raspberry-pi.env.sample deploy/raspberry-pi.env
-```
-
-Edit `deploy/raspberry-pi.env`, then deploy:
-
-```bash
-make deploy-pi
-```
-
-To build only the Raspberry Pi APKs:
+O artefato oficial é um pacote Alpine `.apk`, com binário, serviço OpenRC e configuração em `/etc/sensors-publisher-go/config.env`.
 
 ```bash
 make package-pi
 ```
 
-For unsigned local packages, the deploy script uses `apk add --allow-untrusted`. For production, sign the APK and install the public key in `/etc/apk/keys`.
+Para instalar um pacote local sem assinatura:
+
+```bash
+sudo apk add --allow-untrusted bin/sensors-publisher-go-*.apk
+```
 
 ## ds18b20
 
-to use with 1-wire, run before:
+Para usar o sensor 1-Wire, carregue os módulos antes de iniciar o serviço:
 
 ```bash
 sudo modprobe w1-gpio

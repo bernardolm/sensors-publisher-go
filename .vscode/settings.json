@@ -1,0 +1,16 @@
+{
+	"[go]": {
+		"editor.defaultFormatter": "golang.go",
+		"editor.formatOnSave": true,
+		"editor.codeActionsOnSave": {
+			"source.organizeImports": "explicit"
+		}
+	},
+	// "[markdown]": {
+	// 	"editor.formatOnSave": false
+	// },
+	"markdown.styles": [
+		".vscode/markdown.css"
+	],
+	"chat.editor.fontSize": 18,
+}

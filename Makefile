@@ -1,38 +1,54 @@
-.ONESHELL:
-.PHONY: build-darwin-arm64 build-linux-amd64 build-linux-armv7 build config deploy format gotools lint reset
+.PHONY: \
+	arch-check \
+	build \
+	config \
+	docker-destroy \
+	format \
+	image-pi \
+	lint \
+	package-pi \
+	run \
+	test \
+	watch
 
-ifneq (,$(wildcard ./.env))
-	include ./.env
-	export
-endif
+COMPOSE := docker compose --project-directory $(CURDIR) --file $(CURDIR)/dev/docker/compose.yaml
+BAKE := docker buildx bake --file $(CURDIR)/dev/docker/docker-bake.hcl
+APP_VERSION ?= $(shell date +%y%m%d%H%M%S)_$(shell git rev-parse --short HEAD)
+APK_VERSION ?= 0.1.0.$(shell date +%Y%m%d%H%M%S)
 
-PWD = $(shell pwd)
+build:
+	rm -rf bin
+	$(BAKE) --set "*.args.APP_VERSION=$(APP_VERSION)" build-artifacts
 
-build-darwin-arm64:
-	GOOS=darwin GOARCH=arm64 . ./dev/build/build.sh
+package-pi: build
+	$(BAKE) --set "apk.args.APK_VERSION=$(APK_VERSION)" apk
 
-build-linux-amd64:
-	GOOS=linux GOARCH=amd64 . ./dev/build/build.sh
+image-pi: build
+	$(BAKE) image-pi
 
-build-linux-armv7:
-	GOOS=linux GOARCH=arm GOARM=7 . ./dev/build/build.sh
+run:
+	$(COMPOSE) up --build app
 
-build: build-darwin-arm64 build-linux-amd64 build-linux-armv7
-
-config:
-	ln -sf "$(PWD)/.githooks/pre-commit" "$(PWD)/.git/hooks/pre-commit"
-
-deploy:
-	. ./dev/deploy/dockerx.sh
+watch:
+	$(COMPOSE) up --build --watch app
 
 format:
-	golangci-lint fmt --verbose ./...
-
-gotools:
-	go get -tool $(shell /bin/cat dev/packages.golang)
+	$(COMPOSE) build tool
+	$(COMPOSE) run --rm tool golangci-lint --verbose fmt ./...
 
 lint:
-	golangci-lint run --verbose ./...
+	$(COMPOSE) build tool
+	$(COMPOSE) run --rm tool golangci-lint --verbose run --fix ./...
+	$(COMPOSE) run --rm tool go-arch-lint check --project-path /workspace
 
-reset:
-	reset
+arch-check:
+	$(COMPOSE) run --rm --build tool go-arch-lint check --project-path /workspace
+
+test:
+	$(COMPOSE) run --rm --build tool go test -count=1 ./...
+
+docker-destroy:
+	$(COMPOSE) down --remove-orphans
+
+config:
+	ln -sf "$(CURDIR)/.githooks/pre-commit" "$(CURDIR)/.git/hooks/pre-commit"

@@ -1,0 +1,25 @@
+name: sensors-publisher-go
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: dev/docker/Dockerfile
+      target: tool
+    command: go run ./cmd/cli
+    env_file: .env
+    volumes:
+      - .:/workspace
+      - ${HOME}/.cache/go-build:/root/.cache/go-build
+
+  tool:
+    build:
+      context: .
+      dockerfile: dev/docker/Dockerfile
+      target: tool
+    env_file: .env
+    profiles:
+      - tools
+    volumes:
+      - .:/workspace
+      - ${HOME}/.cache/go-build:/root/.cache/go-build
